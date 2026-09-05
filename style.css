@@ -1,10 +1,11 @@
 body {
-  margin: 0;
-  background-color: beige;
+  background: #0b0b1a;
+  display: flex;
+  justify-content: center;
 }
 
 canvas {
-  display: block;
-  margin: 50px auto;
-  background: #e1dcdc;
+  background: #000;
+  border: 2px solid #444;
+  margin-top: 20px;
 }
