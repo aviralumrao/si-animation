@@ -18,11 +18,14 @@ body {
 }
 
 #startGame:hover {
-  background: #1c64c7;
+  background: #24579e;
 }
 
 canvas {
   background: #000;
   border: 2px solid #444;
+  height: auto;
+  max-width: calc(100vw - 32px);
   margin-top: 20px;
+  width: 1200px;
 }
