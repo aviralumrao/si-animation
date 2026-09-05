@@ -1,7 +1,24 @@
 body {
   background: #0b0b1a;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+}
+
+#startGame {
+  background: #2f80ed;
+  border: 1px solid #8fc1ff;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 20px 10px;
+  padding: 10px 18px;
+}
+
+#startGame:hover {
+  background: #1c64c7;
 }
 
 canvas {
