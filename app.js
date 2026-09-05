@@ -1,10 +1,11 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const startGameButton = document.getElementById("startGame");
+
+let gameRunning = false;
+
 const shuttleImg = new Image();
 shuttleImg.src = "assets/spaceShuttle.png";
-
-startGameButton.addEventListener("click", gameLoop);
 
 const ufoImg1 = new Image();
 ufoImg1.src = "assets/ufo1.png";
@@ -13,31 +14,13 @@ const ufoImg2 = new Image();
 ufoImg2.src = "assets/ufo2.png";
 
 const shuttle = {
-  x: 220,
-  y: 340,
+  x: 570,
+  y: 480,
   width: 60,
-  height: 60,
-  speed: 6
+  height: 60
 };
 
-
-function gameLoop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawShuttle();
-  updateAliens();
-  drawAliens();
-  requestAnimationFrame(gameLoop);
-}
-
-function drawShuttle() {
-  ctx.drawImage(shuttleImg, shuttle.x, shuttle.y, shuttle.width, shuttle.height);
-}
-
-function drawAliens() {
-  aliens.forEach(function (alien) {
-    ctx.drawImage(alien.img, alien.x, alien.y, alien.width, alien.height);
-  });
-}
+const bullets = [];
 
 const aliens = [
   {
@@ -51,7 +34,7 @@ const aliens = [
   },
   {
     x: Math.random() * (canvas.width - 60),
-    y: Math.random() * 400,
+    y: Math.random() * 200,
     width: 60,
     height: 60,
     vx: (Math.random() - 0.5) * 4,
@@ -60,6 +43,15 @@ const aliens = [
   }
 ];
 
+function drawShuttle() {
+  ctx.drawImage(shuttleImg, shuttle.x, shuttle.y, shuttle.width, shuttle.height);
+}
+
+function drawAliens() {
+  aliens.forEach(function (alien) {
+    ctx.drawImage(alien.img, alien.x, alien.y, alien.width, alien.height);
+  });
+}
 
 function updateAliens() {
   aliens.forEach(function (alien) {
@@ -76,9 +68,67 @@ function updateAliens() {
   });
 }
 
-canvas.addEventListener('mousemove', function (e) {
-  shuttle.x = e.offsetX - shuttle.width / 2;
-  shuttle.y = e.offsetY - shuttle.height / 2;
-}); 
+function drawBullets() {
+  ctx.fillStyle = "#ffff00";
+  bullets.forEach(function (bullet) {
+    ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+  });
+}
 
+function updateBullets() {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const bullet = bullets[i];
+    bullet.y -= bullet.speed;
+
+    if (bullet.y + bullet.height < 0) {
+      bullets.splice(i, 1);
+    }
+  }
+}
+
+function gameLoop() {
+  if (!gameRunning) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  updateBullets();
+  drawBullets();
+
+  drawShuttle();
+  updateAliens();
+  drawAliens();
+
+  requestAnimationFrame(gameLoop);
+}
+
+startGameButton.addEventListener("click", function () {
+  if (!gameRunning) {
+    gameRunning = true;
+    startGameButton.textContent = "Restart Game";
+    gameLoop();
+  }
+});
+
+canvas.addEventListener("mousemove", function (e) {
+  const bounds = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / bounds.width;
+  const scaleY = canvas.height / bounds.height;
+  const canvasX = (e.clientX - bounds.left) * scaleX;
+  const canvasY = (e.clientY - bounds.top) * scaleY;
+
+  shuttle.x = Math.max(0, Math.min(canvas.width - shuttle.width, canvasX - shuttle.width / 2));
+  shuttle.y = Math.max(0, Math.min(canvas.height - shuttle.height, canvasY - shuttle.height / 2));
+});
+
+canvas.addEventListener("click", function () {
+  if (!gameRunning) return;
+
+  bullets.push({
+    x: shuttle.x + shuttle.width / 2,
+    y: shuttle.y,
+    width: 4,
+    height: 14,
+    speed: 10
+  });
+});
 
