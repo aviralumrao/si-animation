@@ -16,6 +16,10 @@ function drawShuttle() {
   ctx.drawImage(shuttleImg, shuttle.x, shuttle.y, shuttle.width, shuttle.height);
 }
 
+canvas.addEventListener('mousemove', function (e) {
+  shuttle.x = e.offsetX - shuttle.width / 2;
+  shuttle.y = e.offsetY - shuttle.height / 2;
+});
 
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
