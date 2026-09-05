@@ -93,6 +93,7 @@ function gameLoop() {
 
   updateBullets();
   drawBullets();
+  drawStars();
 
   drawShuttle();
   updateAliens();
@@ -132,3 +133,37 @@ canvas.addEventListener("click", function () {
   });
 });
 
+
+//backgroud stars
+const stars = [];
+
+for (let i = 0; i < 300; i++) {
+  stars.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    radius: Math.random() * 2 ,
+    baseAlpha: Math.random() * 0.5 + 0.5
+  });
+}
+
+function drawStars() {
+  stars.forEach(function (star) {
+    const dx = (shuttle.x + shuttle.width / 2) - star.x;
+    const dy = (shuttle.y + shuttle.height / 2) - star.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    let alpha = star.baseAlpha;
+    let radius = star.radius;
+
+    if (dist < 100) {
+      const boost = (100 - dist) / 100;
+      alpha = Math.min(1, star.baseAlpha + boost * 0.6);
+      radius = star.radius + boost * 2;
+    }
+
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, radius, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+    ctx.fill();
+  });
+}
