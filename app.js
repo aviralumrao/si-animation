@@ -2,6 +2,25 @@ const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const startGameButton = document.getElementById("start");
 
+const backgroundMusic = new Audio("assets/xtremefreddy-game-music-loop-3-144252.mp3");
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.25;
+
+const shotSound = new Audio("assets/game-shot.mp3");
+const alienKillSound = new Audio("assets/alien-kill.mp3");
+const lifeLoseSound = new Audio("assets/life-lose.mp3");
+const gameOverSound = new Audio("assets/game-over.mp3");
+
+function playSound(sound) {
+  sound.currentTime = 0;
+  sound.play();
+}
+
+function stopMusic() {
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+}
+
 let gameRunning = false;
 
 const shuttleImg = new Image();
@@ -14,6 +33,9 @@ const ufoImg2 = new Image();
 ufoImg2.src = "assets/ufo2.png";
 
 let lives = 3;
+let score = 0;
+const scoreDisplay = document.getElementById("score");
+const livesDisplay = document.getElementById("lives");
 
 const shuttle = {
   x: 570,
@@ -54,6 +76,35 @@ function drawAliens() {
     ctx.drawImage(alien.img, alien.x, alien.y, alien.width, alien.height);
   });
 }
+
+function gameLoop() {
+  if (!gameRunning) {
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "40px Arial";
+    ctx.fillText("GAME OVER", canvas.width / 2 - 110, canvas.height / 2);
+    return;
+  }
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawStars();
+  updateBullets();
+  AlienKill();
+  drawBullets();
+
+  updateAlienBullets();
+  PlayerKill();
+  drawAlienBullets();
+
+  drawShuttle();
+  updateAliens();
+  drawAliens();
+
+  updateExplosions();
+  drawExplosions();
+
+  requestAnimationFrame(gameLoop);
+}
+
 
 function updateAliens() {
   aliens.forEach(function (alien) {
@@ -100,42 +151,28 @@ function updateBullets() {
   }
 }
 
-function gameLoop() {
-  if (!gameRunning) {
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "40px Arial";
-    ctx.fillText("GAME OVER", canvas.width / 2 - 110, canvas.height / 2);
-    return;
-  }
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawStars();
-  updateBullets();
-  AlienKill();
-  drawBullets();
-
-  updateAlienBullets();
-  PlayerKill();
-  drawAlienBullets();
-
-  drawShuttle();
-  updateAliens();
-  drawAliens();
-
-  updateExplosions();
-  drawExplosions();
-
-  requestAnimationFrame(gameLoop);
-}
-
-
 
 startGameButton.addEventListener("click", function () {
-  if (!gameRunning) {
-    gameRunning = true;
-    lives = 3;
-    alienSpeed = 1;
-    startGameButton.textContent = "Restart Game";
+  const wasRunning = gameRunning;
+  gameRunning = true;
+  lives = 3;
+  score = 0;
+  alienSpeed = 1;
+  bullets.length = 0;
+  alienBullets.length = 0;
+  sparks.length = 0;
+  aliens.length = 0;
+  spawnAlien();
+  spawnAlien();
+  shuttle.x = 570;
+  shuttle.y = 480;
+  scoreDisplay.textContent = "Score: 0";
+  livesDisplay.textContent = "Lives: 3";
+  startGameButton.textContent = "Restart Game";
+
+  backgroundMusic.play();
+
+  if (!wasRunning) {
     gameLoop();
   }
 });
@@ -161,6 +198,7 @@ canvas.addEventListener("click", function () {
     height: 14,
     speed: 10
   });
+  playSound(shotSound);
 });
 
 
@@ -239,6 +277,10 @@ function AlienKill() {
         bullets.splice(i, 1);
         aliens.splice(j, 1);
 
+        score += 1;
+        scoreDisplay.textContent = "Score: " + score;
+        playSound(alienKillSound);
+
         alienSpeed += 0.2;
         spawnAlien();
         break;
@@ -255,7 +297,7 @@ function spawnAlien() {
 
   aliens.push({
     x: Math.random() * (canvas.width - 60),
-    y: Math.random() * 200,
+    y: Math.random() * 300,
     width: 60,
     height: 60,
     vx: Math.cos(angle) * alienSpeed,
@@ -277,10 +319,15 @@ function PlayerKill() {
       createExplosion(shuttle.x + shuttle.width / 2, shuttle.y + shuttle.height / 2);
       alienBullets.splice(i, 1);
       lives--;
+      playSound(lifeLoseSound);
+      livesDisplay.textContent = "Lives: " + lives;
+
 
       if (lives <= 0) {
         gameRunning = false;
         startGameButton.textContent = "Start Game";
+        stopMusic();
+        playSound(gameOverSound);
       }
     }
   }
@@ -293,7 +340,7 @@ const sparks = [];
 function createExplosion(x, y) {
   for (let i = 0; i < 18; i++) {
     const angle = Math.random() * Math.PI * 2;
-    const speed = Math.random() * 4 +5;
+    const speed = Math.random() * 4 + 5;
 
     sparks.push({
       x: x,
@@ -303,7 +350,7 @@ function createExplosion(x, y) {
       vX: Math.cos(angle) * speed,
       vY: Math.sin(angle) * speed,
       life: 1,
-      width: Math.random() * 2 
+      width: Math.random() * 2
     });
   }
 }
@@ -336,4 +383,3 @@ function drawExplosions() {
   });
 }
 
-//
