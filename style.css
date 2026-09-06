@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 body {
-  background: #121213;
+  background: radial-gradient(circle at 50% 20%, #17142b 0%, #0a0912 55%, #060509 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -25,33 +25,77 @@ body {
   font-size: 2.6rem;
   color: white;
   letter-spacing: 4px;
-  margin: 28px 0 4px;
+  margin: 12px 0 22px;
   text-shadow:
     0 0 18px rgba(139, 92, 246, 0.55),
     0 0 40px rgba(139, 92, 246, 0.25);
 }
 
+#hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: min(1200px, 90vw);
+  margin: 0 0 18px;
+  padding: 12px 20px;
+  background: rgba(24, 20, 40, 0.55);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+#score,
+#lives {
+  font-family: "Press Start 2P", Arial, sans-serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+#score {
+  color: #ffd166;
+  background: rgba(255, 209, 102, 0.08);
+  border: 1px solid rgba(255, 209, 102, 0.3);
+  text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
+}
+
+#lives {
+  color: #ff4d6d;
+  background: rgba(255, 77, 109, 0.08);
+  border: 1px solid rgba(255, 77, 109, 0.3);
+  text-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
+}
+
 #start {
   background: transparent;
-  border: 1.5px solid #271de8;
-  border-radius: 3px;
+  border: 1.5px solid #8b5cf6;
+  border-radius: 8px;
   color: #c5b6f2;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
+  font-family: "Press Start 2P", Arial, sans-serif;
+  font-size: 11px;
   letter-spacing: 1.5px;
-  margin: 16px 0 22px;
-  padding: 11px 28px;
+  padding: 11px 22px;
   transition:
     background 0.2s ease,
     color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    transform 0.1s ease;
 }
 
 #start:hover {
-  background: #602dd6;
-  color: #161517;
-  box-shadow: 0 0 22px rgba(125, 83, 222, 0.6);
+  background: #8b5cf6;
+  color: #0a0912;
+  box-shadow: 0 0 22px rgba(139, 92, 246, 0.6);
+}
+
+#start:active {
+  transform: scale(0.96);
 }
 
 canvas {
