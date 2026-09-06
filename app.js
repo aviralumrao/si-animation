@@ -134,6 +134,7 @@ startGameButton.addEventListener("click", function () {
   if (!gameRunning) {
     gameRunning = true;
     lives = 3;
+    alienSpeed = 1;
     startGameButton.textContent = "Restart Game";
     gameLoop();
   }
@@ -237,12 +238,30 @@ function AlienKill() {
         createExplosion(alien.x + alien.width / 2, alien.y + alien.height / 2);
         bullets.splice(i, 1);
         aliens.splice(j, 1);
+
+        alienSpeed += 0.2;
+        spawnAlien();
         break;
       }
     }
   }
 }
 
+let alienSpeed = 1;
+
+function spawnAlien() {
+  const chosenImg = Math.random() < 0.5 ? ufoImg1 : ufoImg2;
+
+  aliens.push({
+    x: Math.random() * (canvas.width - 60),
+    y: Math.random() * 200,
+    width: 60,
+    height: 60,
+    vx: (Math.random() - 0.5) * 4 * alienSpeed,
+    vy: (Math.random() - 0.5) * 4 * alienSpeed,
+    img: chosenImg
+  });
+}
 
 
 function PlayerKill() {
@@ -316,3 +335,5 @@ function drawExplosions() {
     ctx.stroke();
   });
 }
+
+//
