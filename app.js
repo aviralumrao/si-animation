@@ -251,18 +251,18 @@ let alienSpeed = 1;
 
 function spawnAlien() {
   const chosenImg = Math.random() < 0.5 ? ufoImg1 : ufoImg2;
+  const angle = Math.random() * Math.PI * 2;
 
   aliens.push({
     x: Math.random() * (canvas.width - 60),
     y: Math.random() * 200,
     width: 60,
     height: 60,
-    vx: (Math.random() - 0.5) * 4 * alienSpeed,
-    vy: (Math.random() - 0.5) * 4 * alienSpeed,
+    vx: Math.cos(angle) * alienSpeed,
+    vy: Math.sin(angle) * alienSpeed,
     img: chosenImg
   });
 }
-
 
 function PlayerKill() {
   for (let i = alienBullets.length - 1; i >= 0; i--) {
