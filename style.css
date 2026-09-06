@@ -99,6 +99,7 @@ body {
 }
 
 canvas {
+  cursor: none;
   background: black;
   border: 1px solid rgba(113, 71, 212, 0.4);
   border-radius: 6px;
