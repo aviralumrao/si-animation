@@ -13,6 +13,8 @@ ufoImg1.src = "assets/ufo1.png";
 const ufoImg2 = new Image();
 ufoImg2.src = "assets/ufo2.png";
 
+let lives = 3;
+
 const shuttle = {
   x: 570,
   y: 480,
@@ -65,11 +67,23 @@ function updateAliens() {
     if (alien.y <= 0 || alien.y + alien.height >= canvas.height) {
       alien.vy *= -1;
     }
+
+    if (Math.random() < 0.01) {
+      const direction = Math.random() < 0.5 ? -1 : 1;
+      alienBullets.push({
+        x: alien.x + alien.width / 2,
+        y: alien.y + alien.height / 2,
+        width: 10,
+        height: 4,
+        speed: 5,
+        direction: direction
+      });
+    }
   });
 }
 
 function drawBullets() {
-  ctx.fillStyle = "#ffff00";
+  ctx.fillStyle = "white";
   bullets.forEach(function (bullet) {
     ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
   });
@@ -87,13 +101,23 @@ function updateBullets() {
 }
 
 function gameLoop() {
-  if (!gameRunning) return;
+  if (!gameRunning) {
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "40px Arial";
+    ctx.fillText("GAME OVER", canvas.width / 2 - 110, canvas.height / 2);
+    return;
+  }
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  updateBullets();
-  drawBullets();
   drawStars();
+  updateBullets();
+  AlienKill();
+  drawBullets();
+
+
+  updateAlienBullets();
+  PlayerKill();
+  drawAlienBullets();
 
   drawShuttle();
   updateAliens();
@@ -102,9 +126,12 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
+
+
 startGameButton.addEventListener("click", function () {
   if (!gameRunning) {
     gameRunning = true;
+    lives = 3;
     startGameButton.textContent = "Restart Game";
     gameLoop();
   }
@@ -141,7 +168,7 @@ for (let i = 0; i < 300; i++) {
   stars.push({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
-    radius: Math.random() * 2 ,
+    radius: Math.random() * 2,
     baseAlpha: Math.random() * 0.5 + 0.5
   });
 }
@@ -166,4 +193,72 @@ function drawStars() {
     ctx.fillStyle = `rgba(255,255,255,${alpha})`;
     ctx.fill();
   });
+}
+
+//UFO bullets
+
+const alienBullets = [];
+
+function drawAlienBullets() {
+  ctx.fillStyle = "yellow";
+  alienBullets.forEach(function (bullet) {
+    ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+  });
+}
+
+function updateAlienBullets() {
+  for (let i = alienBullets.length - 1; i >= 0; i--) {
+    const bullet = alienBullets[i];
+    bullet.x += bullet.speed * bullet.direction;
+
+    if (bullet.x < 0 || bullet.x > canvas.width) {
+      alienBullets.splice(i, 1);
+    }
+  }
+}
+
+//gaming
+
+function AlienKill() {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const bullet = bullets[i];
+
+    for (let j = aliens.length - 1; j >= 0; j--) {
+      const alien = aliens[j];
+
+      if (
+        bullet.x < alien.x + alien.width &&
+        bullet.x + bullet.width > alien.x &&
+        bullet.y < alien.y + alien.height &&
+        bullet.y + bullet.height > alien.y
+      ) {
+        bullets.splice(i, 1);
+        aliens.splice(j, 1);
+        break;
+      }
+    }
+  }
+}
+
+
+
+function PlayerKill() {
+  for (let i = alienBullets.length - 1; i >= 0; i--) {
+    const bullet = alienBullets[i];
+
+    if (
+      bullet.x < shuttle.x + shuttle.width &&
+      bullet.x + bullet.width > shuttle.x &&
+      bullet.y < shuttle.y + shuttle.height &&
+      bullet.y + bullet.height > shuttle.y
+    ) {
+      alienBullets.splice(i, 1);
+      lives--;
+
+      if (lives <= 0) {
+        gameRunning = false;
+        startGameButton.textContent = "Start Game";
+      }
+    }
+  }
 }
