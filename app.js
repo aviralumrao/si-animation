@@ -1,6 +1,6 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
-const startGameButton = document.getElementById("startGame");
+const startGameButton = document.getElementById("start");
 
 let gameRunning = false;
 
@@ -114,7 +114,6 @@ function gameLoop() {
   AlienKill();
   drawBullets();
 
-
   updateAlienBullets();
   PlayerKill();
   drawAlienBullets();
@@ -122,6 +121,9 @@ function gameLoop() {
   drawShuttle();
   updateAliens();
   drawAliens();
+
+  updateExplosions();
+  drawExplosions();
 
   requestAnimationFrame(gameLoop);
 }
@@ -232,6 +234,7 @@ function AlienKill() {
         bullet.y < alien.y + alien.height &&
         bullet.y + bullet.height > alien.y
       ) {
+        createExplosion(alien.x + alien.width / 2, alien.y + alien.height / 2);
         bullets.splice(i, 1);
         aliens.splice(j, 1);
         break;
@@ -252,6 +255,7 @@ function PlayerKill() {
       bullet.y < shuttle.y + shuttle.height &&
       bullet.y + bullet.height > shuttle.y
     ) {
+      createExplosion(shuttle.x + shuttle.width / 2, shuttle.y + shuttle.height / 2);
       alienBullets.splice(i, 1);
       lives--;
 
@@ -261,4 +265,54 @@ function PlayerKill() {
       }
     }
   }
+}
+
+
+//Explosion
+const sparks = [];
+
+function createExplosion(x, y) {
+  for (let i = 0; i < 18; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 4 +5;
+
+    sparks.push({
+      x: x,
+      y: y,
+      pX: x,
+      pY: y,
+      vX: Math.cos(angle) * speed,
+      vY: Math.sin(angle) * speed,
+      life: 1,
+      width: Math.random() * 2 
+    });
+  }
+}
+
+function updateExplosions() {
+  for (let i = sparks.length - 1; i >= 0; i--) {
+    const spark = sparks[i];
+    spark.pX = spark.x;
+    spark.pY = spark.y;
+    spark.x += spark.vX;
+    spark.y += spark.vY;
+    spark.vX *= 0.9;
+    spark.vY *= 0.9;
+    spark.life -= 0.04;
+
+    if (spark.life <= 0) {
+      sparks.splice(i, 1);
+    }
+  }
+}
+
+function drawExplosions() {
+  sparks.forEach(function (spark) {
+    ctx.beginPath();
+    ctx.moveTo(spark.pX, spark.pY);
+    ctx.lineTo(spark.x, spark.y);
+    ctx.strokeStyle = `rgba(255, 255, 255, ${Math.max(0, spark.life)})`;
+    ctx.lineWidth = spark.width;
+    ctx.stroke();
+  });
 }
