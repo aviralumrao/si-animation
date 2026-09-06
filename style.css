@@ -1,31 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
 body {
-  background: #0b0b1a;
+  background: #121213;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  padding: 12px;
+  box-sizing: border-box;
 }
 
-#startGame {
-  background: #2f80ed;
-  border: 1px solid #8fc1ff;
-  border-radius: 4px;
-  color: #fff;
+#gameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#gameName {
+  font-family: "Press Start 2P", Arial, sans-serif;
+  font-weight: 800;
+  font-size: 2.6rem;
+  color: white;
+  letter-spacing: 4px;
+  margin: 28px 0 4px;
+  text-shadow:
+    0 0 18px rgba(139, 92, 246, 0.55),
+    0 0 40px rgba(139, 92, 246, 0.25);
+}
+
+#start {
+  background: transparent;
+  border: 1.5px solid #271de8;
+  border-radius: 3px;
+  color: #c5b6f2;
   cursor: pointer;
-  font-size: 16px;
-  margin: 20px 10px;
-  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  margin: 16px 0 22px;
+  padding: 11px 28px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-#startGame:hover {
-  background: #24579e;
+#start:hover {
+  background: #602dd6;
+  color: #161517;
+  box-shadow: 0 0 22px rgba(125, 83, 222, 0.6);
 }
 
 canvas {
-  background: #000;
-  border: 2px solid #444;
+  background: black;
+  border: 1px solid rgba(113, 71, 212, 0.4);
+  border-radius: 6px;
+  box-shadow: 0 0 40px rgba(126, 77, 242, 0.25);
+  aspect-ratio: 1200 / 600;
+  width: auto;
   height: auto;
-  max-width: calc(100vw - 32px);
-  margin-top: 20px;
-  width: 1200px;
+  max-width: 90vw;
+  max-height: 75vh;
+  margin-bottom: 24px;
 }
